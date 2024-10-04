@@ -5,16 +5,33 @@ const loadCatefories = () => {
         .catch(err => console.log('Error:', err))
 }
 
+const loadCateforiesVideos =(id)=>{
+    fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
+    .then(res => res.json())
+    .then(data =>  displayVideos(data.category))
+}
+
+
 const displayCategories = (display) => {
     const categoryBtnConatiner = document.getElementById('category-btn-conatiner');
     display.forEach(item => {
-        const categoryBtn = document.createElement('button');
-        categoryBtn.classList = 'btn';
-        categoryBtn.innerText = item.category
-        categoryBtnConatiner.append(categoryBtn);
+        const Btnconatiner = document.createElement('div');
+        Btnconatiner.innerHTML =`
+            <button onclick="loadCateforiesVideos(${item.category_id})" class="btn">
+            ${item.category}
+            </button>
+        `
+        categoryBtnConatiner.append(Btnconatiner)
     })
 }
-
+    /* get time */
+    function getTime(time){
+        let hours = parseInt(time / 3600)
+        let remainSec = time % 3600;
+        let minutes = parseInt(remainSec / 60);
+        let remainSec2 = remainSec % 60;
+        return`${hours} h ${minutes}min ${remainSec2}sec`
+    }
 const loadVideos = () => {
     fetch('https://openapi.programming-hero.com/api/phero-tube/videos')
         .then(res => res.json())
@@ -24,6 +41,7 @@ const loadVideos = () => {
 
 const displayVideos = (videos) => {
     const videoContainer = document.getElementById('video-container')
+    videoContainer.innerHTML = ''
     videos.forEach(videos => {
         console.log(videos);
         const div = document.createElement('div')
@@ -35,8 +53,8 @@ const displayVideos = (videos) => {
       class="w-full h-full object-cover"
       alt="Shoes" />
       ${
-        videos.others.posted_date?.length === 0 ? '' : `<span class ="absolute bottom-2 right-3 bg-black text-white rounded-md p-1">
-        ${videos.others.posted_date}
+        videos.others.posted_date?.length === 0 ? '' : `<span class ="absolute bottom-2 right-3 bg-black text-white text-xs rounded-md p-1">
+        ${getTime(videos.others.posted_date)}
       </span>`
       }
       
